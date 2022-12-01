@@ -67,4 +67,8 @@ class Rect {
   public void setVisible(boolean value) {
     this._visible = value;
   }
+  
+  public void toggleVisible() {
+    this._visible = !this._visible; 
+  }
 }

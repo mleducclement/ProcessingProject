@@ -12,13 +12,18 @@ boolean mouseOver = false;
 ArrayList<Button> mainMenuButtons = new ArrayList<Button>();
 ArrayList<Rect> mainMenuSubviews = new ArrayList<Rect>();
 ArrayList<ClickHandler> mainMenuCommands = new ArrayList<ClickHandler>();
+
+ArrayList<Button> inventoryButtons;
+ArrayList<ClickHandler> inventoryCommands;
 // Might be better to check only views that are visible by creating an ArrayList of them
 
 Screen currentScreen = Screen.MAIN_MENU;
 
 void setup() {
   font = createFont("courier new", 16);
-  prepareMainMenu();  
+  frameRate(Constants.FRAME_RATE);
+  prepareMainMenu();
+  prepareInventorySubView();
   size(1280, 720);
 }
 
@@ -33,13 +38,15 @@ void draw() {
     break;
   }
   
+  
+  
   if (debugMode) {
     showDebugInfo(); 
   }
 }
 
 void showMainMenu() {
-  background(64, 64, 96);
+  background(128, 128, 128);
 
   for (int i = 0; i < mainMenuButtons.size(); i++) {
     Button currButton = mainMenuButtons.get(i);
@@ -49,17 +56,21 @@ void showMainMenu() {
   
   for (Rect r : mainMenuSubviews) {
     for (Button b : mainMenuButtons) {
-      b.checkOverlap(r);
+      b.setEnabled(b.checkOverlap(r));
     }
+  }
+  
+  for (Button b : mainMenuButtons) {
+    b.checkMouseOver();
   }
 }
 
 void prepareMainMenu() {
-  mainMenuButtons.add(new Button("Play", 200, 200));
-  mainMenuButtons.add(new Button("Exit", 500, 500));
-  mainMenuButtons.add(new Button("TEST", 800, 500));
+  mainMenuButtons.add(new Button("Play", 200, 100));
+  mainMenuButtons.add(new Button("Exit", 200, 165));
+  mainMenuButtons.add(new Button("TEST", 200, 230));
   
-  mainMenuSubviews.add(new Rect(400, 300, 250, 250));
+  mainMenuSubviews.add(new Rect(200, 165, 800, 600));
   
   mainMenuCommands.add(new ClickHandler() {
     @Override
@@ -71,7 +82,7 @@ void prepareMainMenu() {
   mainMenuCommands.add(new ClickHandler() {
     @Override
     public void handleClick() {
-      mainMenuSubviews.get(0).setVisible(true);
+      mainMenuSubviews.get(0).toggleVisible();
     }
   });
   
@@ -81,6 +92,44 @@ void prepareMainMenu() {
       mainMenuSubviews.get(0).setVisible(false);
     }
   });
+}
+
+void prepareInventorySubView() {
+  inventoryButtons = new ArrayList<Button>();
+  inventoryCommands = new ArrayList<ClickHandler>();
+  
+  inventoryButtons.add(new Button("A", 370, 120));
+  inventoryButtons.add(new Button("B", 370, 180));
+  inventoryButtons.add(new Button("C", 370, 240));
+  
+  inventoryCommands.add(new ClickHandler() {
+    @Override 
+    public void handleClick() {
+      println("Option A");
+    }
+  });
+  
+    inventoryCommands.add(new ClickHandler() {
+    @Override 
+    public void handleClick() {
+      println("Option B");
+    }
+  });
+  
+    inventoryCommands.add(new ClickHandler() {
+    @Override 
+    public void handleClick() {
+      println("Option C");
+    }
+  });
+}
+
+void showInventory() {
+    for (int i = 0; i < inventoryButtons.size(); i++) {
+      Button b = inventoryButtons.get(i);
+      b.drawSelf();
+      b.onClick(inventoryCommands.get(i));
+    }
 }
 
 void showGameScreen() {
@@ -111,6 +160,8 @@ void showSubView() {
   for (Rect r : mainMenuSubviews) {
     if (r.getVisible()) r.drawRect();   
   }
+  
+  showInventory();
 }
 
 void showDebugInfo() {
@@ -119,6 +170,8 @@ void showDebugInfo() {
   textAlign(LEFT);
   text(String.format("x: %d / y: %d",mouseX, mouseY), 10, 20);
   text(String.format("enabled: %b", mainMenuButtons.get(1).getEnabled()), 10, 40);
+  text(String.format("fps: %d", (int)frameRate),10, 60);
+  text(String.format("fill: %s", hex(inventoryButtons.get(0).getGFXProps().getFillColor(), 6)), 10, 80);
 }
 
 void mouseReleased() {

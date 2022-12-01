@@ -1,3 +1,3 @@
 public class DebugOverlay {
-  private boolean _visible = false;
+  //private boolean _visible = false;
 }
