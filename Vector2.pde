@@ -1,5 +1,5 @@
 class Vector2 {
-  private int _x, _y; 
+  private int _x = 0, _y = 0;
   
   public Vector2() {}
   

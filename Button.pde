@@ -1,76 +1,43 @@
 class Button extends UIComponent {
 
-  private String _label;
-  private boolean _enabled = true;
-  private color _textColor;
+  private RichText _text;
+  private IClickEventHandler _command;
   
-  // Constructors 
-  public Button () { }
-  
-  public Button (String label, color textColor, int x, int y) {
-    super(new Rect(x, y, Constants.DEFAULT_BTN_WIDTH, Constants.DEFAULT_BTN_HEIGHT), 
-          new GraphicsProperties(Constants.DEFAULT_BTN_FILLCOLOR, 
-                                 Constants.DEFAULT_BTN_STROKECOLOR, 
-                                 Constants.DEFAULT_BTN_HOVERCOLOR));
-    this._label = label;
-    this._textColor = textColor;
-  }
-  
-  public Button (String label, color textColor, int x, int y, GraphicsProperties gfxProps) {
-    super(new Rect(x, y, Constants.DEFAULT_BTN_WIDTH, Constants.DEFAULT_BTN_HEIGHT), gfxProps);
-    this._label = label;
-    this._textColor = textColor;
-  }
-  
-  public Button (String label, color textColor, int x, int y, int w, int h) { 
-    super(new Rect(x, y, w, h), 
-          new GraphicsProperties(Constants.DEFAULT_BTN_FILLCOLOR, 
-                                 Constants.DEFAULT_BTN_STROKECOLOR, 
-                                 Constants.DEFAULT_BTN_HOVERCOLOR));
-    this._label = label;
-    this._textColor = textColor;
-  }
-  
-  public Button (String label, color textColor, int x, int y, int w, int h, GraphicsProperties gfxProps) {
-    super(new Rect(x, y, w, h), gfxProps);
-    this._label = label;
-    this._textColor = textColor;
+  // Constructors
+  public Button (Vector2 position, GraphicsProperties gfxProps, RichText text, IClickEventHandler command) {
+    super(new Rect(position, Constants.DEFAULT_BTN_WIDTH, Constants.DEFAULT_BTN_HEIGHT, gfxProps, ComponentType.BUTTON));
+    this._text = text;
+    this._command = command;
   }
   
   // Methods
   public void drawSelf() {
-    super.drawRect();
+    super._rect.drawRect();
     drawText();
+    onClick(_command);
   }
   
   public void drawText() {
-    fill(_textColor);
+    fill(_text.getTextColor());
+    textSize(_text.getFontSize());
     textAlign(CENTER, CENTER);
-    text(_label, super._rect.getX() + (super._rect.getWidth()/2), super._rect.getY() + (super._rect.getHeight()/2));
+    text(_text.getText(), super._rect.getX() + (super._rect.getWidth()/2), super._rect.getY() + (super._rect.getHeight()/2));
   }
   
-  public void onClick(IClickEventHandler clickHandler) {
-     if (mousePressed && !clicked && checkMouseOver() && _enabled) {
-       clickHandler.handleClick();
+  // Might be a good thing to implement events eventually ?
+  public void onClick(IClickEventHandler command) {
+     if (mousePressed && !clicked && super._rect.checkMouseOver()) {
+       command.handleClick();
        clicked = true;
      }
   }
-  
-  // Getters 
-  public String getLabel() {
-    return _label; 
-  }
-  
-  public boolean getEnabled() {
-    return _enabled; 
-  }
-  
+   
   // Setters
   public void setLabel(String value) {
-    this._label = value;
+    this._text.setText(value);
   }
   
-  public void setEnabled(boolean value) {
-    this._enabled = value;
+  public void setLabelColor(color value) {
+    this._text.setTextColor(value);
   }
 }
